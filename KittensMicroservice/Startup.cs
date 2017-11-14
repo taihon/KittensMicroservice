@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using KittensMicroservice.Services;
+using Microsoft.EntityFrameworkCore;
+using KittensMicroservice.Extensions;
+using KittensMicroservice.Middlewares;
 
 namespace KittensMicroservice
 {
@@ -18,6 +22,10 @@ namespace KittensMicroservice
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<KittensContext>(opt =>
+                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            );
+            services.AddScoped<IDataService, DataService>();
         }
 
         public Startup(IHostingEnvironment env)
@@ -34,17 +42,27 @@ namespace KittensMicroservice
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, KittensContext dbContext)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.Run(async (context) =>
+            dbContext.Database.Migrate();
+            app.UseStaticFiles();
+            app.Use(ValidateMethod);
+            app.MapMethod(HttpMethods.Get, _ => _.UseMiddleware<GetDataMiddleware>());
+            app.MapMethod(HttpMethods.Post, _ => _.UseMiddleware<PostDataMiddleware>());
+        }
+        private Task ValidateMethod(HttpContext context, Func<Task> next)
+        {
+            if (HttpMethods.IsGet(context.Request.Method) ||
+                HttpMethods.IsPost(context.Request.Method))
             {
-                await context.Response.WriteAsync("Hello World!");
-            });
+                return next();
+            }
+            context.Response.StatusCode = StatusCodes.Status405MethodNotAllowed;
+            return Task.CompletedTask;
         }
     }
 }
