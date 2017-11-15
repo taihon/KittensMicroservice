@@ -1,6 +1,6 @@
 ﻿using KittensMicroservice.Auth;
 using KittensMicroservice.Extensions;
-using KittensMicroservice.Models;
+using KittensMicroservice.Viewmodels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
