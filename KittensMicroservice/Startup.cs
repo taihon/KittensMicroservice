@@ -11,6 +11,9 @@ using KittensMicroservice.Services;
 using Microsoft.EntityFrameworkCore;
 using KittensMicroservice.Extensions;
 using KittensMicroservice.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using KittensMicroservice.Auth;
 
 namespace KittensMicroservice
 {
@@ -26,6 +29,20 @@ namespace KittensMicroservice
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
             services.AddScoped<IDataService, DataService>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(opt => {
+                    opt.RequireHttpsMetadata = false;
+                    opt.TokenValidationParameters = new TokenValidationParameters {
+                        ValidateAudience = true,
+                        ValidAudience = AuthOptions.Audience,
+                        ValidateIssuer = true,
+                        ValidIssuer = AuthOptions.Issuer,
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                        ValidateIssuerSigningKey=true,
+                        ValidateLifetime=true
+                };
+                    }
+                );
         }
 
         public Startup(IHostingEnvironment env)
@@ -51,6 +68,8 @@ namespace KittensMicroservice
             dbContext.Database.Migrate();
             app.UseStaticFiles();
             app.Use(ValidateMethod);
+            app.UseAuthentication();
+            app.Map("/token", _ => _.UseMiddleware<GetTokenMiddleware>());
             app.MapMethod(HttpMethods.Get, _ => _.UseMiddleware<GetDataMiddleware>());
             app.MapMethod(HttpMethods.Post, _ => _.UseMiddleware<PostDataMiddleware>());
         }
