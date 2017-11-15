@@ -11,9 +11,10 @@ using System;
 namespace KittensMicroservice.Migrations
 {
     [DbContext(typeof(KittensContext))]
-    partial class KittensContextModelSnapshot : ModelSnapshot
+    [Migration("20171115101924_CreatedBySetter")]
+    partial class CreatedBySetter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

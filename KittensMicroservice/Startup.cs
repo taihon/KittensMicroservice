@@ -39,7 +39,14 @@ namespace KittensMicroservice
                         ValidIssuer = AuthOptions.Issuer,
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey=true,
-                        ValidateLifetime=true
+                        ValidateLifetime=true,
+                        LifetimeValidator = (DateTime? notBefore, DateTime? expires, 
+                            SecurityToken token, TokenValidationParameters parameters) =>
+                        {
+                            if (expires != null)
+                                return DateTime.UtcNow < expires;
+                            return false;
+                        }
                 };
                     }
                 );
