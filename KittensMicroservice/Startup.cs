@@ -30,25 +30,27 @@ namespace KittensMicroservice
             );
             services.AddScoped<IDataService, DataService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt => {
+                .AddJwtBearer(opt =>
+                {
                     opt.RequireHttpsMetadata = false;
-                    opt.TokenValidationParameters = new TokenValidationParameters {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
                         ValidateAudience = true,
                         ValidAudience = AuthOptions.Audience,
                         ValidateIssuer = true,
                         ValidIssuer = AuthOptions.Issuer,
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        ValidateIssuerSigningKey=true,
-                        ValidateLifetime=true,
-                        LifetimeValidator = (DateTime? notBefore, DateTime? expires, 
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        LifetimeValidator = (DateTime? notBefore, DateTime? expires,
                             SecurityToken token, TokenValidationParameters parameters) =>
-                        {
-                            if (expires != null)
-                                return DateTime.UtcNow < expires;
-                            return false;
-                        }
-                };
-                    }
+                                {
+                                    if (expires != null)
+                                        return DateTime.UtcNow < expires;
+                                    return false;
+                                }
+                    };
+                }
                 );
         }
 
