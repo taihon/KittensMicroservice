@@ -17,8 +17,17 @@ namespace KittensMicroservice.Middlewares
         }
         public async Task InvokeAsync(HttpContext context, IDataService dataService)
         {
-            var kitten = await context.Request.ReadJsonAsync<Kitten>();
-            await dataService.SaveDataAsync(kitten);
+            if (context.User.IsInRole("admin")) { 
+                var kitten = await context.Request.ReadJsonAsync<Kitten>();
+                kitten.CreatedBy = context.User.Identity.Name;
+                await dataService.SaveDataAsync(kitten);
+                context.Response.StatusCode = StatusCodes.Status204NoContent;
+            }
+            else
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return;
+            }
         }
     }
 }

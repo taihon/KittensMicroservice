@@ -40,7 +40,7 @@ namespace KittensMicroservice.Middlewares
             if (tokenRequest.Username.StartsWith("admin"))
             {
                 var identity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme);
-                identity.AddClaim(new Claim(ClaimTypes.Name, "hacker"));
+                identity.AddClaim(new Claim(ClaimTypes.Name, tokenRequest.Username));
                 identity.AddClaim(new Claim(ClaimTypes.Role, "admin"));
                 customclaims = identity.Claims;
             }

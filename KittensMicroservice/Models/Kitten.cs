@@ -15,6 +15,6 @@ namespace KittensMicroservice.Models
         [Required]
         [MaxLength(32)]
         public string Color { get; set; }
-        public string CreatedBy { get; }
+        public string CreatedBy { get; set; }
     }
 }
