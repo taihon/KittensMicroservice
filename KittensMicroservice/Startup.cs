@@ -14,6 +14,8 @@ using KittensMicroservice.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using KittensMicroservice.Auth;
+using KittensMicroservice.DataAccess;
+using KittensMicroservice.DataAccess.Implementation;
 
 namespace KittensMicroservice
 {
@@ -29,6 +31,12 @@ namespace KittensMicroservice
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
             services.AddScoped<IDataService, DataService>();
+            // Register queries and commands
+            services
+                .AddScoped<ICreateKittenCommand, CreateKittenCommand>()
+
+                ;
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(opt =>
                 {

@@ -1,6 +1,8 @@
-﻿using KittensMicroservice.Extensions;
+﻿using KittensMicroservice.DataAccess;
+using KittensMicroservice.Extensions;
 using KittensMicroservice.Models;
 using KittensMicroservice.Services;
+using KittensMicroservice.Viewmodels;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -15,12 +17,11 @@ namespace KittensMicroservice.Middlewares
         {
 
         }
-        public async Task InvokeAsync(HttpContext context, IDataService dataService)
+        public async Task InvokeAsync(HttpContext context, IDataService dataService, ICreateKittenCommand command)
         {
             if (context.User.IsInRole("admin")) { 
-                var kitten = await context.Request.ReadJsonAsync<Kitten>();
-                kitten.CreatedBy = context.User.Identity.Name;
-                await dataService.SaveDataAsync(kitten);
+                var request = await context.Request.ReadJsonAsync<CreateKittenRequest>();
+                await command.ExecuteAsync(request, context.User.Identity.Name);
                 context.Response.StatusCode = StatusCodes.Status204NoContent;
             }
             else

@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DataAccess.Implementation\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

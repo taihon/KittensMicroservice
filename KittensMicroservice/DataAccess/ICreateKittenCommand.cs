@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace KittensMicroservice.DataAccess
 {
-    interface ICreateKittenCommand
+    public interface ICreateKittenCommand
     {
-        Task ExecuteAsync(CreateKittenRequest request);
+        Task ExecuteAsync(CreateKittenRequest request, string owner);
     }
 }
