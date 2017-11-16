@@ -17,7 +17,7 @@ namespace KittensMicroservice.Middlewares
         {
 
         }
-        public async Task InvokeAsync(HttpContext context, IDataService dataService, ICreateKittenCommand command)
+        public async Task InvokeAsync(HttpContext context, ICreateKittenCommand command)
         {
             if (context.User.IsInRole("admin")) { 
                 var request = await context.Request.ReadJsonAsync<CreateKittenRequest>();
