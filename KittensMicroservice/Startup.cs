@@ -1,8 +1,8 @@
-﻿using KittensMicroservice.Auth;
-using KittensMicroservice.DataAccess;
+﻿using KittensMicroservice.DataAccess;
 using KittensMicroservice.DataAccess.Implementation;
 using KittensMicroservice.Extensions;
 using KittensMicroservice.Middlewares;
+using KittensMicroservice.Options;
 using KittensMicroservice.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

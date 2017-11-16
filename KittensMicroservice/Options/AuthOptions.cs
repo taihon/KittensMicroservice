@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KittensMicroservice.Auth
+namespace KittensMicroservice.Options
 {
     public class AuthOptions
     {

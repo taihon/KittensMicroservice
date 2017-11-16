@@ -1,12 +1,7 @@
 ﻿using KittensMicroservice.DataAccess;
 using KittensMicroservice.Extensions;
-using KittensMicroservice.Models;
-using KittensMicroservice.Services;
 using KittensMicroservice.Viewmodels;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace KittensMicroservice.Middlewares
