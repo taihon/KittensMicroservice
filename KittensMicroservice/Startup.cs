@@ -34,7 +34,7 @@ namespace KittensMicroservice
             // Register queries and commands
             services
                 .AddScoped<ICreateKittenCommand, CreateKittenCommand>()
-
+                .AddScoped<IGenerateTokenQuery,GenerateTokenQuery>()
                 ;
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

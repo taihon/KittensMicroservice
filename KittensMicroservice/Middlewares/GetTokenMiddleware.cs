@@ -1,4 +1,5 @@
 ﻿using KittensMicroservice.Auth;
+using KittensMicroservice.DataAccess;
 using KittensMicroservice.Extensions;
 using KittensMicroservice.Viewmodels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -22,59 +24,21 @@ namespace KittensMicroservice.Middlewares
             AuthOptions = options.Value;
         }
         private AuthOptions AuthOptions { get; }
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IGenerateTokenQuery query)
         {
-            var tokenRequest = context.Request.ReadJsonAsync<GetTokenRequest>().Result;
-            if (!ModelIsValid(tokenRequest))
+            var tokenRequest = await context.Request.ReadJsonAsync<GetTokenRequest>();
+            context.Response.ContentType = "application/json";
+            ValidationContext validationContext = new ValidationContext(tokenRequest, null, null);
+            var results = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(tokenRequest,validationContext,results,true))
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                var resp = new { error = "" };
-                context.Response.ContentType = "application/json";
+                var resp = new { error = "", errors = results };
                 await context.Response.WriteAsync(JsonConvert.SerializeObject(resp, new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 return;
             }
-            var now = DateTime.UtcNow;
-            if (tokenRequest.ExpiresIn == null)
-                tokenRequest.ExpiresIn = 10;
-            IEnumerable<Claim> customclaims=null;
-            if (tokenRequest.Username.StartsWith("admin"))
-            {
-                var identity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme);
-                identity.AddClaim(new Claim(ClaimTypes.Name, tokenRequest.Username));
-                identity.AddClaim(new Claim(ClaimTypes.Role, "admin"));
-                customclaims = identity.Claims;
-            }
-            var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.Issuer,
-                audience: AuthOptions.Audience,
-                claims: customclaims,
-                signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),
-                    SecurityAlgorithms.HmacSha256),
-                expires: now.Add(TimeSpan.FromSeconds(tokenRequest.ExpiresIn.Value))
-                );
-            
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            var response = new
-            {
-                token = encodedJwt,
-                name = tokenRequest.Username
-            };
-
-            context.Response.ContentType = "application/json";
+            var response = query.Run(tokenRequest);
             await context.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
-        }
-        private bool ModelIsValid(GetTokenRequest request)
-        {
-            if (request == null) return false;
-            if (request.ExpiresIn < 10 || request.ExpiresIn > 300)
-                return false;
-            if (string.IsNullOrEmpty(request.Password) || request.Password.Length > 32)
-                return false;
-            if (string.IsNullOrEmpty(request.Username) || request.Username.Length > 32)
-                return false;
-            if (request.Username != request.Password)
-                return false;
-            return true;
         }
     }
 }

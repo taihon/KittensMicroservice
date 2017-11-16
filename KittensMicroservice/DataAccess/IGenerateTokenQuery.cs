@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace KittensMicroservice.DataAccess
 {
-    interface IGetTokenQuery
+    public interface IGenerateTokenQuery
     {
-        Task<object> RunAsync(GetTokenRequest request);
+        TokenResponse Run(GetTokenRequest request);
     }
 }
