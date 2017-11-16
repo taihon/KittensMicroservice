@@ -88,8 +88,8 @@ namespace KittensMicroservice
             app.UseAuthentication();
             app.Map("/token", _ => _.UseMiddleware<GetTokenMiddleware>());
             app.UseMiddleware<IsAuthenticatedMiddleware>();
-            app.MapMethod(HttpMethods.Get, _ => _.UseMiddleware<GetDataMiddleware>());
-            app.MapMethod(HttpMethods.Post, _ => _.UseMiddleware<PostDataMiddleware>());
+            app.MapMethod(HttpMethods.Get, _ => _.UseMiddleware<GetKittensMiddleware>());
+            app.MapMethod(HttpMethods.Post, _ => _.UseMiddleware<AddKittenMiddleware>());
         }
         private Task ValidateMethod(HttpContext context, Func<Task> next)
         {

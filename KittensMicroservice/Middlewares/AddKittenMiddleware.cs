@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace KittensMicroservice.Middlewares
 {
-    public class PostDataMiddleware
+    public class AddKittenMiddleware
     {
-        public PostDataMiddleware(RequestDelegate next)
+        public AddKittenMiddleware(RequestDelegate next)
         {
 
         }

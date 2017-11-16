@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace KittensMicroservice.Middlewares
 {
-    public class GetDataMiddleware
+    public class GetKittensMiddleware
     {
-        public GetDataMiddleware(RequestDelegate next)
+        public GetKittensMiddleware(RequestDelegate next)
         {
 
         }
