@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using KittensMicroservice.Auth;
+using KittensMicroservice.DataAccess;
+using KittensMicroservice.DataAccess.Implementation;
+using KittensMicroservice.Extensions;
+using KittensMicroservice.Middlewares;
+using KittensMicroservice.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using KittensMicroservice.Services;
 using Microsoft.EntityFrameworkCore;
-using KittensMicroservice.Extensions;
-using KittensMicroservice.Middlewares;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using KittensMicroservice.Auth;
-using KittensMicroservice.DataAccess;
-using KittensMicroservice.DataAccess.Implementation;
+using System;
+using System.Threading.Tasks;
 
 namespace KittensMicroservice
 {
@@ -34,7 +32,8 @@ namespace KittensMicroservice
             // Register queries and commands
             services
                 .AddScoped<ICreateKittenCommand, CreateKittenCommand>()
-                .AddScoped<IGenerateTokenQuery,GenerateTokenQuery>()
+                .AddScoped<IGenerateTokenQuery, GenerateTokenQuery>()
+                .AddScoped<IKittensListQuery, KittensListQuery>()
                 ;
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
